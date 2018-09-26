@@ -11,8 +11,11 @@ import (
 
 //##### global stuff ####
 var baseURL = "https://www.fundamentus.com.br/"
-var urlLinkSlices [887]string //mudar isso dps
-var urlSlices = make([]string, 887)
+
+// var urlLinkSlices [887]string //mudar isso dps
+// var urlSlices = make([]string, 887)
+
+var allUrls []string
 
 type PapersInfo struct {
 	paperName, companyName string
@@ -22,7 +25,7 @@ type PapersInfo struct {
 var papersSlice = make([]PapersInfo, 887)
 
 //find all the links in the main page
-func paperScrape() {
+func getPaperLinks() {
 	doc, err := goquery.NewDocument(baseURL + "detalhes.php")
 	if err != nil {
 		log.Fatal(err)
@@ -31,11 +34,7 @@ func paperScrape() {
 	doc.Find("tbody td a").Each(func(index int, item *goquery.Selection) { //using the HTML tag as selectors
 		title := item.Text()
 		link, _ := item.Attr("href") //get the link itself
-		// linkTag := item.Find("a")
-		// link, _ := linkTag.Attr("href")
-		// fmt.Printf("Post #%d: %s - %s\n", index, title, link)
-		urlLinkSlices[index] = link
-		urlSlices[index] = link
+		allUrls = append(allUrls, link)
 		fmt.Printf("Post #%d: %s - %s\n", index, title, link)
 	})
 }
@@ -50,48 +49,54 @@ func getInfoFromURL() {
 	var companyName string = ""
 	var marketValue string = ""
 	var dailyRate string = ""
+	// count := 0
 
-	for i := 0; i < len(urlSlices); i++ {
-		doc, err := goquery.NewDocument(baseURL + urlSlices[i])
-		fmt.Println("\n" + baseURL + urlSlices[i])
+	for i := 0; i < len(allUrls); i++ {
+		doc, err := goquery.NewDocument(baseURL + allUrls[i])
+		fmt.Println("\n" + baseURL + allUrls[i])
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		println(NumberOfElementChild(doc.Find("table.w728 tbody td.data")))
+		// println(NumberOfElementChild(doc.Find("table.w728 tbody td.data")))
 
-		//todos em um só
-		doc.Find("table.w728 tr td.data").Each(func(index int, item *goquery.Selection) { //company's name
+		//:nth-child(n)	p:nth-child(2)	Selects every <p> element that is the second child of its parent
+		doc.Find("td.data.w35").Each(func(index int, item *goquery.Selection) { //company's name
+			paperName = item.Find("span").Text()
+			fmt.Printf("paper Name #%d: %s\n", index, paperName)
+		})
+		doc.Find("tr:nth-child(3) td:nth-child(2)").EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
+			companyName = item.Find("span").Text()
+			fmt.Printf("company Name #%d: %s\n", index, companyName)
 			if index == 0 {
-				paperName = item.Find("span").Text()
-				fmt.Printf("paper Name #%d: %s\n", index, paperName)
+				return false
 			}
-			if index == 4 {
-				companyName = item.Find("span").Text()
-				fmt.Printf("company Name #%d: %s\n", index, companyName)
-			}
-			if index == 10 {
+			return true
+		})
+		doc.Find("td:nth-child(2) ").EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
+			if index == 5 {
 				marketValue = item.Find("span").Text()
-				// marketV, _ := strconv.ParseFloat(marketValueString, 64)
-				fmt.Printf("Valor de Mercado #%d: %s\n", index, marketValue) //eh o segundo
+				fmt.Printf("market Value #%d: %s\n", index, marketValue)
+				return false
 			}
-			if index == 14 {
-				dailyRate = item.Find("span").Text()
-				// dailyR, _ := strconv.ParseFloat(dailyRateString, 64)
-				fmt.Printf("Porcentagem Oscilacao Diaria #%d: %s\n", index, dailyRate) //eh o segundo
-			}
+			return true
 		})
 
+		doc.Find("span.oscil").EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
+			if index == 0 {
+				dailyRate = item.Text()
+				fmt.Printf("market Value #%d: %s\n", index, dailyRate)
+				return false
+			}
+			return true
+		})
 	}
 }
 
 func main() {
-	paperScrape()
-	fmt.Println(len(urlLinkSlices))
-	fmt.Println(len(urlSlices))
-	// for i := 0; i < len(urlSlices); i++ {
-	// 	fmt.Println(urlSlices[i])
-	// }
+
+	getPaperLinks()
+	fmt.Println(len(allUrls))
 	getInfoFromURL()
 }
 
