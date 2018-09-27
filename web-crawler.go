@@ -88,8 +88,9 @@ func getInfoFromURL() {
 			}
 			return true
 		})
-		doc.Find("td:nth-child(2) ").EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
-			if index == 5 {
+		mvaleSelector := "body > div.center > div.conteudo.clearfix > table:nth-child(3) > tbody > tr:nth-child(1) > td.data.w3"
+		doc.Find(mvaleSelector).EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
+			if index == 0 {
 				marketV := item.Find("span").Text()
 				noDots := strings.Replace(marketV, ".", "", -1) //-1 means all occurrencies
 				marketValue, _ = strconv.ParseFloat(noDots, 64)
