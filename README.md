@@ -48,6 +48,11 @@ real    1m17,083s
 user    0m0,015s
 sys     0m0,000s
 
+Compiling the code as an exe (with 6 go routines)
+real    1m9,395s
+user    0m0,000s
+sys     0m0,031s
+
 
 
 
@@ -56,6 +61,7 @@ A WaitGroup waits for a collection of goroutines to finish. The main goroutine c
 
 https://nathanleclaire.com/blog/2014/02/15/how-to-wait-for-all-goroutines-to-finish-executing-before-continuing/
 
+https://www.ardanlabs.com/blog/2014/01/concurrency-goroutines-and-gomaxprocs.html
 
 Maximizing throughput is about getting rid of bottlenecks. First of all find where is most time is lost.
 

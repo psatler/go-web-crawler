@@ -33,6 +33,8 @@ func main() {
 	fmt.Println("NumCPU", runtime.NumCPU())          //4
 	fmt.Println("GOMAXPROCS", runtime.GOMAXPROCS(0)) //4
 
+	// runtime.GOMAXPROCS(runtime.NumCPU())
+
 	getPaperLinks()
 	fmt.Println(len(allUrls))
 	size := len(allUrls)
