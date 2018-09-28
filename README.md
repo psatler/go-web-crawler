@@ -2,7 +2,7 @@
 > In progress...
 
 running:
-time go run main.go getInfoFromURL.go getListOfLinks.go sortPapers.go printPapers.go
+time go run *.go
 
 
 #0 -     Company: CVRD ON N1
