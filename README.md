@@ -22,6 +22,37 @@
 #9 -     Company: CVRD PNA N1
          Market Value: 176290000000.000000
 
+Time without any concurrency (go routines) used
 real    4m33,679s
 user    0m0,000s
 sys     0m0,015s
+
+
+dividing the slice of urls and running them using go routines:
+With 5 go routines
+real    1m14,511s
+user    0m0,000s
+sys     0m0,015s
+
+with 10 go routines
+real    1m18,038s
+user    0m0,000s
+sys     0m0,030s
+
+with 20 go routines
+real    1m17,083s
+user    0m0,015s
+sys     0m0,000s
+
+
+
+
+explanation: 
+A WaitGroup waits for a collection of goroutines to finish. The main goroutine calls Add to set the number of goroutines to wait for. Then each of the goroutines runs and calls Done when finished. At the same time, Wait can be used to block until all goroutines have finished.
+
+https://nathanleclaire.com/blog/2014/02/15/how-to-wait-for-all-goroutines-to-finish-executing-before-continuing/
+
+
+Maximizing throughput is about getting rid of bottlenecks. First of all find where is most time is lost.
+
+Sometimes running too many goroutines doesn’t make things faster but makes them slower, because goroutines start to compete for resources. Usually the fastest configuration is one that uses resources in the most effective way: if things are limited by computation then it's best to set the number of running goroutines equal to the number of CPU cores. But if it is limited by IO then choose the optimal number by measuring its performance.
