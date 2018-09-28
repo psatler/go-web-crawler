@@ -1,6 +1,10 @@
 # A simple Go Web Crawler
 > In progress...
 
+running:
+time go run main.go getInfoFromURL.go getListOfLinks.go sortPapers.go printPapers.go
+
+
 #0 -     Company: CVRD ON N1
          Market Value: 317121000000.000000
 #1 -     Company: PETROBRAS ON
