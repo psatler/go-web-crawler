@@ -9,8 +9,8 @@ import (
 )
 
 func GetInfoFromURL(init int, end int) {
-	var paperName string = ""
-	var companyName string = ""
+	var paperName string
+	var companyName string
 	var marketValue float64
 	var dailyRate string
 
@@ -23,7 +23,7 @@ func GetInfoFromURL(init int, end int) {
 		doc, err := goquery.NewDocument(baseURL + allUrls[i])
 		// fmt.Println(i, " - ", baseURL+allUrls[i])
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("GetInfoFromURL: ", err)
 		}
 
 		// println(NumberOfElementChild(doc.Find("table.w728 tbody td.data")))
@@ -50,9 +50,9 @@ func GetInfoFromURL(init int, end int) {
 		mvalueSelector := "body > div.center > div.conteudo.clearfix > table:nth-child(3) > tbody > tr:nth-child(1) > td.data.w3"
 		doc.Find(mvalueSelector).EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
 			if index == 0 {
-				marketV := item.Find("span").Text()
-				noDots := strings.Replace(marketV, ".", "", -1) //-1 means all occurrencies
-				marketValue, _ = strconv.ParseFloat(noDots, 64)
+				marketV := item.Find("span").Text()             //text as string
+				noDots := strings.Replace(marketV, ".", "", -1) //-1 means all occurrencies (taking out the dots in the string to convert it to float later)
+				marketValue, _ = strconv.ParseFloat(noDots, 64) //converting to float
 				paperInfo.marketValue = marketValue
 				// fmt.Println(marketValue)
 				// fmt.Println(strconv.FormatFloat(marketValue, 'f', 6, 64))
@@ -68,6 +68,7 @@ func GetInfoFromURL(init int, end int) {
 			if index == 0 {
 				dailyRate = item.Text()
 				// fmt.Printf("daily Rate #%d: %s\n", index, dailyRate)
+				paperInfo.dailyRate = dailyRate
 				return false
 			}
 			return true

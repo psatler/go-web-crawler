@@ -7,3 +7,4 @@ func sortPapers() {
 		return allPapersInfo[i].marketValue > allPapersInfo[j].marketValue
 	})
 }
+

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/PuerkitoBio/goquery"
@@ -11,13 +10,13 @@ import (
 func getPaperLinks() {
 	doc, err := goquery.NewDocument(baseURL + "detalhes.php")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("getPaperLinks", err)
 	}
 
 	doc.Find("tbody td a").Each(func(index int, item *goquery.Selection) { //using the HTML tag as selectors
-		title := item.Text()
+		// title := item.Text()
 		link, _ := item.Attr("href") //get the link itself
 		allUrls = append(allUrls, link)
-		fmt.Printf("Post #%d: %s - %s\n", index, title, link)
+		// fmt.Printf("Post #%d: %s - %s\n", index, title, link)
 	})
 }
