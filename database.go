@@ -4,18 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
-
-//used in local db
-var username = "root"
-var password = "pablo2908"
-
-// var ip = "172.17.0.2:3306"
-var ip = "localhost"
-var dbname = "demodb"
 
 // +-------------+--------------+------+-----+---------+-------+
 // | Field       | Type         | Null | Key | Default | Extra |
@@ -26,11 +19,22 @@ var dbname = "demodb"
 // | marketValue | float        | YES  |     | NULL    |       |
 // +-------------+--------------+------+-----+---------+-------+
 
+func envVar(envVar string) string {
+	foo := os.Getenv(envVar)
+	return foo
+}
+
+var username = envVar("DB_USERNAME")
+var password = envVar("DB_PASSWORD")
+var ip = envVar("DB_IP")
+var dbname = envVar("DB_NAME")
+var port = envVar("DB_PORT")
+
 //writes the result to a mysql database
-// func WriteToDb(info PapersInfo) {
 func WriteToDb() {
 	//db requests
-	db, err := sql.Open("mysql", username+":"+password+"@tcp("+ip+":3306)/"+dbname) //open a connection
+	dataSourceName := username + ":" + password + "@tcp(" + ip + ":" + port + ")/" + dbname + "?charset=utf8&parseTime=True&loc=Local"
+	db, err := sql.Open("mysql", dataSourceName) //open a connection
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		panic(err.Error())
@@ -46,38 +50,25 @@ func WriteToDb() {
 
 		stmt, err := db.Prepare("insert into ibovespa (paperName, companyName, dailyRate, marketValue) values(?,?,?,?);")
 		if err != nil {
-			fmt.Print(err.Error())
+			fmt.Print("At writing to db (Prepare): ", err.Error())
 		}
 		_, err = stmt.Exec(allPapersInfo[i].paperName, allPapersInfo[i].companyName, allPapersInfo[i].dailyRate, mValueInFloat)
 
 		if err != nil {
-			fmt.Print(err.Error())
+			fmt.Print("At writing to db (Exec): ", err.Error())
 		}
 
 		defer stmt.Close()
 
 	}
-	// // perform a db.Query insert
-	// // insert, err := db.Query("INSERT INTO test VALUES ( , 'TEST' )")
-	// stmt, err := db.Prepare("insert into ibovespa (paperName, companyName, dailyRate, marketValue) values(?,?,?,?);")
-	// if err != nil {
-	// 	fmt.Print(err.Error())
-	// }
-	// _, err = stmt.Exec(info.paperName, info.companyName, info.dailyRate, info.marketValue)
-
-	// if err != nil {
-	// 	fmt.Print(err.Error())
-	// }
-
-	// defer stmt.Close()
 }
 
 //reads the database and returns a struct with the information stored in the DB
 func ReadFromDb() []PapersInfo {
 	var mostValuable []PapersInfo //it'll store the values returned from DB
 
-	// Open up our database connection.
-	db, err := sql.Open("mysql", username+":"+password+"@tcp("+ip+")/"+dbname) //open a connection
+	dataSourceName := username + ":" + password + "@tcp(" + ip + ":3306)/" + dbname + "?charset=utf8&parseTime=True&loc=Local"
+	db, err := sql.Open("mysql", dataSourceName) //open a connection
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		log.Print(err.Error())

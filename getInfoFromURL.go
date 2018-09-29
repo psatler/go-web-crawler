@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -23,7 +24,8 @@ func GetInfoFromURL(init int, end int) {
 		doc, err := goquery.NewDocument(baseURL + allUrls[i])
 		// fmt.Println(i, " - ", baseURL+allUrls[i])
 		if err != nil {
-			log.Fatal("GetInfoFromURL: ", err)
+			fmt.Println(i, " - ", baseURL+allUrls[i])
+			log.Fatal("GetInfoFromURL.go file: ", err)
 		}
 
 		// println(NumberOfElementChild(doc.Find("table.w728 tbody td.data")))
