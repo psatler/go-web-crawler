@@ -39,8 +39,6 @@ sudo docker-compose up
 - [StrConv](https://godoc.org/strconv): implements conversions to and from string representations of basic data types.
 - [Sort](https://godoc.org/sort#example-Slice): provides primitives for sorting slices and user-defined collections.
 
-# License
-
 # Acknowledgments
 
 The app first searches a list of links to be queried afterwards. Then, it pulls some information of these links, like stock price, market value, etc. This second search (for details of each link) is the process which takes longer.
@@ -69,9 +67,23 @@ It was used the command below (as a root user), where `db-mysql-container` is th
 sudo docker exec -it db-mysql-container mysql -uroot -proot
 ```
 
-## Docker Compose
+## Load a SQL file using Docker Compose
 
-When using volumes
+It's done via volumes, as shown in the `docker-compose.yaml` file in this project and as shown [here](https://stackoverflow.com/questions/44533534/docker-how-to-use-sql-file-in-directory) and [here](https://gist.github.com/onjin/2dd3cc52ef79069de1faa2dfd456c945).
+
+```
+db:
+     volumes:
+        /path-to-sql-files-on-your-host:/docker-entrypoint-initdb.d
+```
+
+then run `docker-compose down -v` to destroy containers and volumes and run `docker-compose up` to recreate them.
+
+## Linking one container to another
+
+To reach a service on another container, take [this docker tutorial](https://docs.docker.com/compose/networking/) as reference.
+
+For example, in this project, _DB_HOST_ env var is defined as `db`, the name given to the mysql service. And _DB_PORT_ is set with the same number exposed in **ports** inside the mysql.
 
 ---
 
