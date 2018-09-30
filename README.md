@@ -39,13 +39,39 @@ sudo docker-compose up
 - [StrConv](https://godoc.org/strconv): implements conversions to and from string representations of basic data types.
 - [Sort](https://godoc.org/sort#example-Slice): provides primitives for sorting slices and user-defined collections.
 
-# Some Results and Useful links
+# License
+
+# Acknowledgments
 
 The app first searches a list of links to be queried afterwards. Then, it pulls some information of these links, like stock price, market value, etc. This second search (for details of each link) is the process which takes longer.
 
 The first implementation, without any concurrency used, took about **4min30s** to **5min** to be completed. Then, another approach was dividing the slice into _go routines_, where each _go routine_ would take care of a part of the slice, appending the result to a final slice of structs. With that approach, the time spent dropped down to **1min09s** ish.
 
 It was used a _WaitGroup_. A WaitGroup waits for a collection of goroutines to finish. The main goroutine calls _Add_ to set the number of goroutines to wait for. Then each of the goroutines runs and calls _Done_ when finished. At the same time, _Wait_ can be used to block until all goroutines have finished.
+
+## Useful/Basic MySQL Database Commands
+
+```
+show databases;
+use <DBName>;
+show tables;
+describe <TableName>;
+drop database <DBName>;
+drop table <TableName>;
+select * from <TableName>;
+```
+
+## Opening MySQL db from inside the container
+
+It was used the command below (as a root user), where `db-mysql-container` is the container name defined on Docker Compose file.
+
+```
+sudo docker exec -it db-mysql-container mysql -uroot -proot
+```
+
+## Docker Compose
+
+When using volumes
 
 ---
 
