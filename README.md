@@ -47,7 +47,7 @@ The first implementation, without any concurrency used, took about **4min30s** t
 
 It was used a _WaitGroup_. A WaitGroup waits for a collection of goroutines to finish. The main goroutine calls _Add_ to set the number of goroutines to wait for. Then each of the goroutines runs and calls _Done_ when finished. At the same time, _Wait_ can be used to block until all goroutines have finished.
 
-## Useful/Basic MySQL Database Commands
+### Useful/Basic MySQL Database Commands
 
 ```
 show databases;
@@ -59,7 +59,7 @@ drop table <TableName>;
 select * from <TableName>;
 ```
 
-## Opening MySQL db from inside the container
+### Opening MySQL db from inside the container
 
 It was used the command below (as a root user), where `db-mysql-container` is the container name defined on Docker Compose file.
 
@@ -67,7 +67,7 @@ It was used the command below (as a root user), where `db-mysql-container` is th
 sudo docker exec -it db-mysql-container mysql -uroot -proot
 ```
 
-## Load a SQL file using Docker Compose
+### Load a SQL file using Docker Compose
 
 It's done via volumes, as shown in the `docker-compose.yaml` file in this project and as shown [here](https://stackoverflow.com/questions/44533534/docker-how-to-use-sql-file-in-directory) and [here](https://gist.github.com/onjin/2dd3cc52ef79069de1faa2dfd456c945).
 
@@ -79,7 +79,7 @@ db:
 
 then run `docker-compose down -v` to destroy containers and volumes and run `docker-compose up` to recreate them.
 
-## Linking one container to another
+### Linking one container to another
 
 To reach a service on another container, take [this docker tutorial](https://docs.docker.com/compose/networking/) as reference.
 
