@@ -19,7 +19,12 @@ type PapersInfo struct {
 	marketValue                       float64
 }
 
-var allPapersInfo []PapersInfo
+// var allPapersInfo []PapersInfo
+var allPapersInfoStruct struct {
+	mu            sync.Mutex
+	allPapersInfo []PapersInfo
+}
+
 var wg sync.WaitGroup
 
 func main() {
@@ -34,11 +39,12 @@ func main() {
 	fmt.Println(len(allUrls))
 	size := len(allUrls)
 	// divisor := 6 //for some reason it's been optimal for me in my computer
-	divisor := 6 //for some reason it's been optimal for me in my computer
+	divisor := 6 //for some reason it's been optimal for me in my computer and it takes 3m52.811s
 	// divisor := 30 //54s
-	// divisor := 50 //0m45.156s
-	// divisor := 80 //0m26.239s
-	// divisor := 200 //0m26.239s
+	// divisor := 50 //3m30.269s
+	// divisor := 80 //2m30.975s
+	// divisor := 85 //3m40.942s
+	// divisor := 88 //3m11.998s
 
 	// wg.Add(divisor)
 	// go getInfoFromURL((size / divisor * 0), size/divisor*1)
@@ -56,18 +62,20 @@ func main() {
 	}
 	wg.Wait()
 
-	fmt.Printf("allPapersInfo: %d ", len(allPapersInfo))
+	// fmt.Printf("allPapersInfo: %d \n", len(allPapersInfo))
+	fmt.Printf("allPapersInfoStruct: %d ", len(allPapersInfoStruct.allPapersInfo))
 	printFirst10Papers()
 	sortPapers()
 	fmt.Println("\n - In Order - \n")
 	printFirst10Papers()
 
-	fmt.Println("\n teste 1 -")
+	fmt.Println("\n WRITING TO DB -")
 	WriteToDb()
-	fmt.Println("\n teste 2 -")
+	fmt.Println("\n READING FROM DB -")
 	result := ReadFromDb()
+	fmt.Println("\n - PRINTING FROM DATABASE - \n")
 	for i := 0; i < len(result); i++ {
-		fmt.Println("\n - FROM DATABASE - \n")
-		fmt.Printf("\n#%d - \t Company: %s \n \t Market Value: %f \n", i, allPapersInfo[i].companyName, allPapersInfo[i].marketValue)
+		fmt.Printf("\n#%d - \t Company: %s \n \t Market Value: %f \n", i, allPapersInfoStruct.allPapersInfo[i].companyName, allPapersInfoStruct.allPapersInfo[i].marketValue)
 	}
+
 }

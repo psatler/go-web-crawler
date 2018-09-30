@@ -2,12 +2,28 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"io"
+	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
+
+func recoverFunc() {
+	if r := recover(); r != nil {
+		fmt.Println("recovered from ", r)
+		// debug.PrintStack() //so we don't lose the stack trace
+	}
+}
+
+func checkError(err error, url string) {
+	if err != nil {
+		fmt.Println("URL: " + url)
+		panic(err)
+		// os.Exit(1)
+	}
+}
 
 func GetInfoFromURL(init int, end int) {
 	var paperName string
@@ -15,18 +31,27 @@ func GetInfoFromURL(init int, end int) {
 	var marketValue float64
 	var dailyRate string
 
-	// size := len(allUrls)
+	defer recoverFunc()
 	defer wg.Done()
 
 	for i := init; i < end; i++ {
 		// for i := 0; i < len(allUrls); i++ {
 		paperInfo := PapersInfo{} //a struct of paper with its information
-		doc, err := goquery.NewDocument(baseURL + allUrls[i])
-		// fmt.Println(i, " - ", baseURL+allUrls[i])
-		if err != nil {
-			fmt.Println(i, " - ", baseURL+allUrls[i])
-			log.Fatal("GetInfoFromURL.go file: ", err)
-		}
+
+		response, err := http.Get(baseURL + allUrls[i])
+		checkError(err, baseURL+allUrls[i])
+
+		defer response.Body.Close()
+		// println(response.Body)
+		doc, err := goquery.NewDocumentFromReader(io.Reader(response.Body))
+		checkError(err, baseURL+allUrls[i])
+
+		// doc, err := goquery.NewDocument(baseURL + allUrls[i])
+		// // fmt.Println(i, " - ", baseURL+allUrls[i])
+		// if err != nil {
+		// 	fmt.Println(i, " - ", baseURL+allUrls[i])
+		// 	log.Fatal("GetInfoFromURL.go file: ", err)
+		// }
 
 		// println(NumberOfElementChild(doc.Find("table.w728 tbody td.data")))
 
@@ -77,7 +102,12 @@ func GetInfoFromURL(init int, end int) {
 		})
 
 		//append the newly created struct to the slice of all papers
-		allPapersInfo = append(allPapersInfo, paperInfo)
+		// allPapersInfo = append(allPapersInfo, paperInfo)
+
+		//using a mutex to avoid losing data
+		allPapersInfoStruct.mu.Lock()
+		allPapersInfoStruct.allPapersInfo = append(allPapersInfoStruct.allPapersInfo, paperInfo)
+		allPapersInfoStruct.mu.Unlock()
 
 		// fmt.Println(len(allPapersInfo))
 	}

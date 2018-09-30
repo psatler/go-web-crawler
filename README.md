@@ -87,6 +87,13 @@ For example, in this project, _DB_HOST_ env var is defined as `db`, the name giv
 
 ---
 
+I'm getting this error sometimes, mostly when I increase the number of goroutines
+stream error: stream ID 147; PROTOCOL_ERROR at GetInfoFromURL.go file
+
+stream error: stream ID 183; PROTOCOL_ERROR
+
+I treated this error with a recover function, printing the stack trace. The code does continue running, however, we lose data, possibly being one of the 10 most valuable companies, which is our main goal at this project.
+
 #0 - Company: CVRD ON N1
 Market Value: 317121000000.000000
 #1 - Company: PETROBRAS ON

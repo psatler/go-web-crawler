@@ -49,14 +49,14 @@ func WriteToDb() {
 	defer db.Close()
 
 	for i := 0; i < 10; i++ {
-		mValueInFloat := strconv.FormatFloat(allPapersInfo[i].marketValue, 'f', 0, 64)
+		mValueInFloat := strconv.FormatFloat(allPapersInfoStruct.allPapersInfo[i].marketValue, 'f', 0, 64)
 		// fmt.Printf("\n#%d - \t Company: %s \n \t Market Value: %s \n", i, allPapersInfo[i].companyName, mValueInFloat)
 
 		stmt, err := db.Prepare("insert into ibovespa (paperName, companyName, dailyRate, marketValue) values(?,?,?,?);")
 		if err != nil {
 			fmt.Print("At writing to db (Prepare): ", err.Error())
 		}
-		_, err = stmt.Exec(allPapersInfo[i].paperName, allPapersInfo[i].companyName, allPapersInfo[i].dailyRate, mValueInFloat)
+		_, err = stmt.Exec(allPapersInfoStruct.allPapersInfo[i].paperName, allPapersInfoStruct.allPapersInfo[i].companyName, allPapersInfoStruct.allPapersInfo[i].dailyRate, mValueInFloat)
 
 		if err != nil {
 			fmt.Print("At writing to db (Exec): ", err.Error())
