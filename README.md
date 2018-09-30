@@ -1,11 +1,53 @@
 # A simple Go Web Crawler
 
-> In progress...
+> A go web crawler with MySQL persistency
 
-A simple go web crawler that finds the 10 most valuable companies according to the [Fundamentus](https://www.fundamentus.com.br/detalhes.php) website. It searches for stock name, company name, average daily rate of stock, and company's market value, storing them at a MySQL dabatase.
+A simple go web crawler that finds the 10 most valuable companies according to the [Fundamentus](https://www.fundamentus.com.br/detalhes.php) website. It searches for stock name, company name, average daily rate of stock, and company's market value, storing them at a _MySQL_ dabatase.
 
-running:
-time go run \*.go
+# How to Run
+
+You can either run it locally via a shell script or in a container via Docker Compose. Also, you need to provide an **_.env_** file to access the database. An example is shown in [.env.example]().
+
+## Using a shell script and running locally
+
+Do the following:
+
+```
+go get github.com/psatler/go-web-crawler
+cd go-web-crawler
+sh init-db.sh
+```
+
+The script might ask you about _sudo_ passwords to make sure _MySQL_ service is up. Also, it opens the _MySQL_ db as a root user.
+
+## Using Docker Compose
+
+The project also comes with a Docker Compose file to create containers for each service (go application and _MySQL_). So, to run using it, do:
+
+```
+git clone https://github.com/psatler/go-web-crawler.git
+cd go-web-crawler
+sudo docker-compose up
+```
+
+**NOTE:** If the _MySQL_ service is up, it might rise some port conflicts/errors, so you might have to do `sudo service mysql stop` first to be able to run docker compose.
+
+# Main Dependencies
+
+- [GoQuery](https://godoc.org/github.com/PuerkitoBio/goquery): implements features similar to jQuery, including the chainable syntax, to manipulate and query an HTML document.
+- [Go-sql-driver](https://godoc.org/github.com/go-sql-driver/mysql): package mysql provides a MySQL driver for Go's database/sql package.
+- [StrConv](https://godoc.org/strconv): implements conversions to and from string representations of basic data types.
+- [Sort](https://godoc.org/sort#example-Slice): provides primitives for sorting slices and user-defined collections.
+
+# Some Results and Useful links
+
+The app first searches a list of links to be queried afterwards. Then, it pulls some information of these links, like stock price, market value, etc. This second search (for details of each link) is the process which takes longer.
+
+The first implementation, without any concurrency used, took about **4min30s** to **5min** to be completed. Then, another approach was dividing the slice into _go routines_, where each _go routine_ would take care of a part of the slice, appending the result to a final slice of structs. With that approach, the time spent dropped down to **1min09s** ish.
+
+It was used a _WaitGroup_. A WaitGroup waits for a collection of goroutines to finish. The main goroutine calls _Add_ to set the number of goroutines to wait for. Then each of the goroutines runs and calls _Done_ when finished. At the same time, _Wait_ can be used to block until all goroutines have finished.
+
+---
 
 #0 - Company: CVRD ON N1
 Market Value: 317121000000.000000
