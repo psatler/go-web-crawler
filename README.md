@@ -2,6 +2,8 @@
 
 > In progress...
 
+A simple go web crawler that finds the 10 most valuable companies according to the [Fundamentus](https://www.fundamentus.com.br/detalhes.php) website. It searches for stock name, company name, average daily rate of stock, and company's market value, storing them at a MySQL dabatase.
+
 running:
 time go run \*.go
 
