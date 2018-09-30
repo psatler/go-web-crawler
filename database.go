@@ -19,21 +19,25 @@ import (
 // | marketValue | float        | YES  |     | NULL    |       |
 // +-------------+--------------+------+-----+---------+-------+
 
-func envVar(envVar string) string {
-	foo := os.Getenv(envVar)
-	return foo
+func envVar(envVar string, defaultVar string) string {
+	foo, ok := os.LookupEnv(envVar)
+	if ok {
+		return foo
+	} else {
+		return defaultVar
+	}
 }
 
-var username = envVar("DB_USERNAME")
-var password = envVar("DB_PASSWORD")
-var ip = envVar("DB_IP")
-var dbname = envVar("DB_NAME")
-var port = envVar("DB_PORT")
+var username = envVar("DB_USERNAME", "root")
+var password = envVar("DB_PASSWORD", "pablo2908")
+var host = envVar("DB_HOST", "localhost")
+var dbname = envVar("DB_NAME", "demodb")
+var port = envVar("DB_PORT", "3306")
 
 //writes the result to a mysql database
 func WriteToDb() {
 	//db requests
-	dataSourceName := username + ":" + password + "@tcp(" + ip + ":" + port + ")/" + dbname + "?charset=utf8&parseTime=True&loc=Local"
+	dataSourceName := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?charset=utf8&parseTime=True&loc=Local"
 	db, err := sql.Open("mysql", dataSourceName) //open a connection
 	// if there is an error opening the connection, handle it
 	if err != nil {
@@ -67,7 +71,7 @@ func WriteToDb() {
 func ReadFromDb() []PapersInfo {
 	var mostValuable []PapersInfo //it'll store the values returned from DB
 
-	dataSourceName := username + ":" + password + "@tcp(" + ip + ":3306)/" + dbname + "?charset=utf8&parseTime=True&loc=Local"
+	dataSourceName := username + ":" + password + "@tcp(" + host + ":3306)/" + dbname + "?charset=utf8&parseTime=True&loc=Local"
 	db, err := sql.Open("mysql", dataSourceName) //open a connection
 	// if there is an error opening the connection, handle it
 	if err != nil {

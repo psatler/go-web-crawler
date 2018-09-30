@@ -34,10 +34,10 @@ func main() {
 	fmt.Println(len(allUrls))
 	size := len(allUrls)
 	// divisor := 6 //for some reason it's been optimal for me in my computer
-	// divisor := 6 //for some reason it's been optimal for me in my computer
+	divisor := 6 //for some reason it's been optimal for me in my computer
 	// divisor := 30 //54s
 	// divisor := 50 //0m45.156s
-	divisor := 80 //0m26.239s
+	// divisor := 80 //0m26.239s
 	// divisor := 200 //0m26.239s
 
 	// wg.Add(divisor)
