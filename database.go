@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 // +-------------+--------------+------+-----+---------+-------+
@@ -19,17 +20,20 @@ import (
 // | marketValue | float        | YES  |     | NULL    |       |
 // +-------------+--------------+------+-----+---------+-------+
 
-func envVar(envVar string, defaultVar string) string {
-	foo, ok := os.LookupEnv(envVar)
-	if ok {
-		return foo
-	} else {
-		return defaultVar
+func envVar(key, fallback string) string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
+
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }
 
 var username = envVar("DB_USERNAME", "root")
-var password = envVar("DB_PASSWORD", "root")
+var password = envVar("DB_PASSWORD", "pablo2908")
 var host = envVar("DB_HOST", "localhost")
 var dbname = envVar("DB_NAME", "demodb")
 var port = envVar("DB_PORT", "3306")
