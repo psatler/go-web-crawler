@@ -18,11 +18,9 @@ func GetPaperLinks() {
 		log.Fatal("getPaperLinks", err)
 	}
 
-	doc.Find("tbody td a").Each(func(index int, item *goquery.Selection) { //using the HTML tag as selectors
-		// title := item.Text()
+	doc.Find("tbody td a").Each(func(index int, item *goquery.Selection) {
 		link, _ := item.Attr("href") //get the link itself
 		globals.AllUrls = append(globals.AllUrls, link)
-		// allUrls = append(allUrls, link)
-		// fmt.Printf("Post #%d: %s - %s\n", index, title, link)
+
 	})
 }

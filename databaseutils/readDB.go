@@ -26,7 +26,7 @@ func ReadFromDb() []PapersInfo {
 	// Execute the query
 	results, err := db.Query("SELECT paperName, companyName, dailyRate, marketValue FROM ibovespa")
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
 	for results.Next() {
@@ -34,10 +34,10 @@ func ReadFromDb() []PapersInfo {
 		// for each row, scan the result into our tag composite object
 		err = results.Scan(&info.PaperName, &info.CompanyName, &info.DailyRate, &info.MarketValue)
 		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+			panic(err.Error())
 		}
-		// and then print out the tag's Name attribute
-		log.Printf(info.PaperName, info.CompanyName, info.DailyRate, info.MarketValue)
+		// and then print out
+		// log.Printf(info.PaperName, info.CompanyName, info.DailyRate, info.MarketValue)
 		mostValuable = append(mostValuable, info)
 	}
 

@@ -38,27 +38,15 @@ func GetInfoFromURL(init int, end int) {
 	defer globals.Wg.Done()
 
 	for i := init; i < end; i++ {
-		// for i := 0; i < len(allUrls); i++ {
 		paperInfo := globals.PapersInfo{} //declaring a struct of paper with its information
 
 		response, err := http.Get(globals.BaseURL + globals.AllUrls[i])
 		checkError(err, globals.BaseURL+globals.AllUrls[i])
 
 		defer response.Body.Close()
-		// println(response.Body)
 		doc, err := goquery.NewDocumentFromReader(io.Reader(response.Body))
 		checkError(err, globals.BaseURL+globals.AllUrls[i])
 
-		// doc, err := goquery.NewDocument(baseURL + allUrls[i])
-		// // fmt.Println(i, " - ", baseURL+allUrls[i])
-		// if err != nil {
-		// 	fmt.Println(i, " - ", baseURL+allUrls[i])
-		// 	log.Fatal("GetInfoFromURL.go file: ", err)
-		// }
-
-		// println(NumberOfElementChild(doc.Find("table.w728 tbody td.data")))
-
-		//https://www.w3schools.com/cssref/css_selectors.asp
 		pNameSelector := "body > div.center > div.conteudo.clearfix > table:nth-child(2) > tbody > tr:nth-child(1) > td.data.w35"
 		// doc.Find("td.data.w35").Each(func(index int, item *goquery.Selection) { //company's name
 		doc.Find(pNameSelector).Each(func(index int, item *goquery.Selection) { //company's name
@@ -66,8 +54,8 @@ func GetInfoFromURL(init int, end int) {
 			// fmt.Printf("paper Name #%d: %s\n", index, paperName)
 			paperInfo.PaperName = paperName
 		})
+
 		cNameSelector := "body > div.center > div.conteudo.clearfix > table:nth-child(2) > tbody > tr:nth-child(3) > td:nth-child(2)"
-		// doc.Find("tr:nth-child(3) td:nth-child(2)").EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
 		doc.Find(cNameSelector).EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
 			companyName = item.Find("span").Text()
 			paperInfo.CompanyName = companyName
@@ -77,6 +65,7 @@ func GetInfoFromURL(init int, end int) {
 			}
 			return true
 		})
+
 		mvalueSelector := "body > div.center > div.conteudo.clearfix > table:nth-child(3) > tbody > tr:nth-child(1) > td.data.w3"
 		doc.Find(mvalueSelector).EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
 			if index == 0 {
@@ -84,9 +73,6 @@ func GetInfoFromURL(init int, end int) {
 				noDots := strings.Replace(marketV, ".", "", -1) //-1 means all occurrencies (taking out the dots in the string to convert it to float later)
 				marketValue, _ = strconv.ParseFloat(noDots, 64) //converting to float
 				paperInfo.MarketValue = marketValue
-				// fmt.Println(marketValue)
-				// fmt.Println(strconv.FormatFloat(marketValue, 'f', 6, 64))
-				// fmt.Printf("market Value #%d: %f\n", index, marketValue)
 
 				return false
 			}
@@ -103,9 +89,6 @@ func GetInfoFromURL(init int, end int) {
 			}
 			return true
 		})
-
-		//append the newly created struct to the slice of all papers
-		// allPapersInfo = append(allPapersInfo, paperInfo)
 
 		//using a mutex to avoid losing data
 		globals.AllPapersInfoStruct.Mu.Lock()

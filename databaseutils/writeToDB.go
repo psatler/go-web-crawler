@@ -19,13 +19,11 @@ func WriteToDb() {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// defer the close till after the main function has finished executing
 	defer db.Close()
 
 	for i := 0; i < 10; i++ {
 		mValueInFloat := strconv.FormatFloat(globals.AllPapersInfoStruct.AllPapersInfo[i].MarketValue, 'f', 0, 64)
-		// fmt.Printf("\n#%d - \t Company: %s \n \t Market Value: %s \n", i, allPapersInfo[i].companyName, mValueInFloat)
 
 		stmt, err := db.Prepare("insert into ibovespa (paperName, companyName, dailyRate, marketValue) values(?,?,?,?);")
 		if err != nil {
