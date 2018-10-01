@@ -28,7 +28,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql #This will import the dump (init.sql file) on container start creating the database and table
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root #password
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: demodb
       MYSQL_USER: test
       MYSQL_PASSWORD: test

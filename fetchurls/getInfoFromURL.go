@@ -1,4 +1,4 @@
-package main
+package fetchurls
 
 import (
 	"fmt"
@@ -8,6 +8,9 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+
+	//custom package
+	"github.com/psatler/go-web-crawler/globals"
 )
 
 func recoverFunc() {
@@ -32,19 +35,19 @@ func GetInfoFromURL(init int, end int) {
 	var dailyRate string
 
 	defer recoverFunc()
-	defer wg.Done()
+	defer globals.Wg.Done()
 
 	for i := init; i < end; i++ {
 		// for i := 0; i < len(allUrls); i++ {
-		paperInfo := PapersInfo{} //a struct of paper with its information
+		paperInfo := globals.PapersInfo{} //declaring a struct of paper with its information
 
-		response, err := http.Get(baseURL + allUrls[i])
-		checkError(err, baseURL+allUrls[i])
+		response, err := http.Get(globals.BaseURL + globals.AllUrls[i])
+		checkError(err, globals.BaseURL+globals.AllUrls[i])
 
 		defer response.Body.Close()
 		// println(response.Body)
 		doc, err := goquery.NewDocumentFromReader(io.Reader(response.Body))
-		checkError(err, baseURL+allUrls[i])
+		checkError(err, globals.BaseURL+globals.AllUrls[i])
 
 		// doc, err := goquery.NewDocument(baseURL + allUrls[i])
 		// // fmt.Println(i, " - ", baseURL+allUrls[i])
@@ -61,13 +64,13 @@ func GetInfoFromURL(init int, end int) {
 		doc.Find(pNameSelector).Each(func(index int, item *goquery.Selection) { //company's name
 			paperName = item.Find("span").Text()
 			// fmt.Printf("paper Name #%d: %s\n", index, paperName)
-			paperInfo.paperName = paperName
+			paperInfo.PaperName = paperName
 		})
 		cNameSelector := "body > div.center > div.conteudo.clearfix > table:nth-child(2) > tbody > tr:nth-child(3) > td:nth-child(2)"
 		// doc.Find("tr:nth-child(3) td:nth-child(2)").EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
 		doc.Find(cNameSelector).EachWithBreak(func(index int, item *goquery.Selection) bool { //company's name
 			companyName = item.Find("span").Text()
-			paperInfo.companyName = companyName
+			paperInfo.CompanyName = companyName
 			// fmt.Printf("company Name #%d: %s\n", index, companyName)
 			if index == 0 {
 				return false
@@ -80,7 +83,7 @@ func GetInfoFromURL(init int, end int) {
 				marketV := item.Find("span").Text()             //text as string
 				noDots := strings.Replace(marketV, ".", "", -1) //-1 means all occurrencies (taking out the dots in the string to convert it to float later)
 				marketValue, _ = strconv.ParseFloat(noDots, 64) //converting to float
-				paperInfo.marketValue = marketValue
+				paperInfo.MarketValue = marketValue
 				// fmt.Println(marketValue)
 				// fmt.Println(strconv.FormatFloat(marketValue, 'f', 6, 64))
 				// fmt.Printf("market Value #%d: %f\n", index, marketValue)
@@ -95,7 +98,7 @@ func GetInfoFromURL(init int, end int) {
 			if index == 0 {
 				dailyRate = item.Text()
 				// fmt.Printf("daily Rate #%d: %s\n", index, dailyRate)
-				paperInfo.dailyRate = dailyRate
+				paperInfo.DailyRate = dailyRate
 				return false
 			}
 			return true
@@ -105,10 +108,9 @@ func GetInfoFromURL(init int, end int) {
 		// allPapersInfo = append(allPapersInfo, paperInfo)
 
 		//using a mutex to avoid losing data
-		allPapersInfoStruct.mu.Lock()
-		allPapersInfoStruct.allPapersInfo = append(allPapersInfoStruct.allPapersInfo, paperInfo)
-		allPapersInfoStruct.mu.Unlock()
+		globals.AllPapersInfoStruct.Mu.Lock()
+		globals.AllPapersInfoStruct.AllPapersInfo = append(globals.AllPapersInfoStruct.AllPapersInfo, paperInfo)
+		globals.AllPapersInfoStruct.Mu.Unlock()
 
-		// fmt.Println(len(allPapersInfo))
 	}
 }
