@@ -29,7 +29,7 @@ func envVar(envVar string, defaultVar string) string {
 }
 
 var username = envVar("DB_USERNAME", "root")
-var password = envVar("DB_PASSWORD", "pablo2908")
+var password = envVar("DB_PASSWORD", "root")
 var host = envVar("DB_HOST", "localhost")
 var dbname = envVar("DB_NAME", "demodb")
 var port = envVar("DB_PORT", "3306")

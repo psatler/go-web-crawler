@@ -66,14 +66,14 @@ func main() {
 	fmt.Printf("allPapersInfoStruct: %d ", len(allPapersInfoStruct.allPapersInfo))
 	printFirst10Papers()
 	sortPapers()
-	fmt.Println("\n - In Order - \n")
+	fmt.Println("\n - In Order ")
 	printFirst10Papers()
 
 	fmt.Println("\n WRITING TO DB -")
 	WriteToDb()
 	fmt.Println("\n READING FROM DB -")
 	result := ReadFromDb()
-	fmt.Println("\n - PRINTING FROM DATABASE - \n")
+	fmt.Println("\n - PRINTING FROM DATABASE ")
 	for i := 0; i < len(result); i++ {
 		fmt.Printf("\n#%d - \t Company: %s \n \t Market Value: %f \n", i, allPapersInfoStruct.allPapersInfo[i].companyName, allPapersInfoStruct.allPapersInfo[i].marketValue)
 	}

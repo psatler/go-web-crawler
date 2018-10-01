@@ -87,6 +87,8 @@ For example, in this project, _DB_HOST_ env var is defined as `db`, the name giv
 
 ---
 
+a aplicacao estava rodando bem rapido sem o mutex, mas estava havendo perda de dados, sendo que o slice final estava menor que o original. Entao adicionei o mutex, e resolvi esse problema
+
 I'm getting this error sometimes, mostly when I increase the number of goroutines
 stream error: stream ID 147; PROTOCOL_ERROR at GetInfoFromURL.go file
 
