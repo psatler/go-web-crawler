@@ -18,16 +18,12 @@ func main() {
 	fmt.Println("GOMAXPROCS", runtime.GOMAXPROCS(0)) //4
 
 	fetchurls.GetPaperLinks()
-	fmt.Println(len(globals.AllUrls))
-	size := len(globals.AllUrls)
-	// divisor := 6 //for some reason it's been optimal for me in my computer
-	// divisor := 6 //for some reason it's been optimal for me in my computer and it takes 3m52.811s
-	// divisor := 30 //54s
-	// divisor := 50 //3m30.269s
-	divisor := 80 //2m30.975s
-	// divisor := 85 //3m40.942s
-	// divisor := 88 //3m11.998s
+	fmt.Println("found ", len(globals.AllUrls), " links")
 
+	size := len(globals.AllUrls)
+	divisor := 6 //for some reason it's been optimal for me in my computer and it takes about 3m52.811s
+	// divisor := 4 //7m16.102s - Ran ok
+	// divisor := 8 //7m12.708s
 	globals.Wg.Add(divisor)
 	for i := 0; i < divisor; i++ {
 		if (divisor - i) == 1 { //if is the last iteration, take care of summing the remainder
@@ -38,15 +34,15 @@ func main() {
 	}
 	globals.Wg.Wait()
 
-	fmt.Printf("allPapersInfoStruct: %d ", len(globals.AllPapersInfoStruct.AllPapersInfo))
-	utilfuncs.FirstTen()
+	fmt.Printf("No of info returned: %d ", len(globals.AllPapersInfoStruct.AllPapersInfo))
+	// utilfuncs.FirstTen()
 	utilfuncs.SortStockPapers()
-	fmt.Println("\n - In Order ")
-	utilfuncs.FirstTen()
+	// fmt.Println("\n - In Order ")
+	// utilfuncs.FirstTen()
 
-	fmt.Println("\n WRITING TO DB -")
+	fmt.Println("\n - WRITING TO DB -")
 	databaseutils.WriteToDb()
-	fmt.Println("\n READING FROM DB -")
+	fmt.Println("\n - READING FROM DB -")
 	result := databaseutils.ReadFromDb()
 	fmt.Println("\n - PRINTING FROM DATABASE ")
 	for i := 0; i < len(result); i++ {
