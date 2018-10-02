@@ -43,7 +43,7 @@ sudo docker-compose up
 
 The app first searches a list of links to be queried afterwards. Then, it pulls some information of these links, like stock price, market value, etc. This second search (for details of each link) is the process which takes longer.
 
-The first implementation, without any concurrency used, took about **4min30s** to **5min** to be completed. Then, another approach was dividing the slice into _go routines_, where each _go routine_ would take care of a part of the slice, appending the result to a final slice of structs. With that approach, the time spent dropped down to **1min09s** ish.
+The first implementation, without any concurrency used, took about **9min30s** to **10min** to be completed. Then, another approach was dividing the slice into _go routines_, where each _go routine_ would take care of a part of the slice, appending the result to a final slice of structs. With that approach, the time spent dropped down to **4mins** ish.
 
 It was used a _WaitGroup_. A WaitGroup waits for a collection of goroutines to finish. The main goroutine calls _Add_ to set the number of goroutines to wait for. Then each of the goroutines runs and calls _Done_ when finished. At the same time, _Wait_ can be used to block until all goroutines have finished.
 
@@ -84,76 +84,3 @@ then run `docker-compose down -v` to destroy containers and volumes and run `doc
 To reach a service on another container, take [this docker tutorial](https://docs.docker.com/compose/networking/) as reference.
 
 For example, in this project, _DB_HOST_ env var is defined as `db`, the name given to the mysql service. And _DB_PORT_ is set with the same number exposed in **ports** inside the mysql.
-
----
-
-a aplicacao estava rodando bem rapido sem o mutex, mas estava havendo perda de dados, sendo que o slice final estava menor que o original. Entao adicionei o mutex, e resolvi esse problema
-
-I'm getting this error sometimes, mostly when I increase the number of goroutines
-stream error: stream ID 147; PROTOCOL_ERROR at GetInfoFromURL.go file
-
-stream error: stream ID 183; PROTOCOL_ERROR
-
-I treated this error with a recover function, printing the stack trace. The code does continue running, however, we lose data, possibly being one of the 10 most valuable companies, which is our main goal at this project.
-
-#0 - Company: CVRD ON N1
-Market Value: 317121000000.000000
-#1 - Company: PETROBRAS ON
-Market Value: 304719000000.000000
-#2 - Company: AMBEV S/A ON NM
-Market Value: 294004000000.000000
-#3 - Company: ITAUUNIBANCO PN N1
-Market Value: 283143000000.000000
-#4 - Company: AMBEV ON
-Market Value: 272509000000.000000
-#5 - Company: AMBEV PN
-Market Value: 271883000000.000000
-#6 - Company: PETROBRAS PN
-Market Value: 263368000000.000000
-#7 - Company: ITAUUNIBANCO ON N1
-Market Value: 247456000000.000000
-#8 - Company: BANCO BRADESCO S.A. PN N1
-Market Value: 191986000000.000000
-#9 - Company: CVRD PNA N1
-Market Value: 176290000000.000000
-
-Time without any concurrency (go routines) used
-real 4m33,679s
-user 0m0,000s
-sys 0m0,015s
-
-dividing the slice of urls and running them using go routines:
-With 5 go routines
-real 1m14,511s
-user 0m0,000s
-sys 0m0,015s
-
-with 10 go routines
-real 1m18,038s
-user 0m0,000s
-sys 0m0,030s
-
-with 20 go routines
-real 1m17,083s
-user 0m0,015s
-sys 0m0,000s
-
-Compiling the code as an exe (with 6 go routines)
-real 1m9,395s
-user 0m0,000s
-sys 0m0,031s
-
-explanation:
-A WaitGroup waits for a collection of goroutines to finish. The main goroutine calls Add to set the number of goroutines to wait for. Then each of the goroutines runs and calls Done when finished. At the same time, Wait can be used to block until all goroutines have finished.
-
-https://nathanleclaire.com/blog/2014/02/15/how-to-wait-for-all-goroutines-to-finish-executing-before-continuing/
-
-https://www.ardanlabs.com/blog/2014/01/concurrency-goroutines-and-gomaxprocs.html
-
-Maximizing throughput is about getting rid of bottlenecks. First of all find where is most time is lost.
-
-Sometimes running too many goroutines doesn’t make things faster but makes them slower, because goroutines start to compete for resources. Usually the fastest configuration is one that uses resources in the most effective way: if things are limited by computation then it's best to set the number of running goroutines equal to the number of CPU cores. But if it is limited by IO then choose the optimal number by measuring its performance.
-
-# installed Docker
-
-See links used as base to install docker on Ubuntu 16:04 LTS
