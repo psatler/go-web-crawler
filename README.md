@@ -43,7 +43,7 @@ sudo docker-compose up
 
 This project is licensed under the terms of the [MIT License](https://opensource.org/licenses/MIT) © Pablo Satler 2018
 
-# Acknowledgments
+# Acknowledgements
 
 The app first searches a list of links to be queried afterwards. Then, it pulls some information of these links, like stock price, market value, etc. This second search (for details of each link) is the process which takes longer.
 
