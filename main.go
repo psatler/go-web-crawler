@@ -21,10 +21,10 @@ func main() {
 	fmt.Println(len(globals.AllUrls))
 	size := len(globals.AllUrls)
 	// divisor := 6 //for some reason it's been optimal for me in my computer
-	divisor := 6 //for some reason it's been optimal for me in my computer and it takes 3m52.811s
+	// divisor := 6 //for some reason it's been optimal for me in my computer and it takes 3m52.811s
 	// divisor := 30 //54s
 	// divisor := 50 //3m30.269s
-	// divisor := 80 //2m30.975s
+	divisor := 80 //2m30.975s
 	// divisor := 85 //3m40.942s
 	// divisor := 88 //3m11.998s
 

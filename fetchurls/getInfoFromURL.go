@@ -41,11 +41,11 @@ func GetInfoFromURL(init int, end int) {
 		paperInfo := globals.PapersInfo{} //declaring a struct of paper with its information
 
 		response, err := http.Get(globals.BaseURL + globals.AllUrls[i])
-		checkError(err, globals.BaseURL+globals.AllUrls[i])
+		checkError(err, "at Get "+globals.BaseURL+globals.AllUrls[i])
 
 		defer response.Body.Close()
 		doc, err := goquery.NewDocumentFromReader(io.Reader(response.Body))
-		checkError(err, globals.BaseURL+globals.AllUrls[i])
+		checkError(err, "at NewDocFromReader "+globals.BaseURL+globals.AllUrls[i])
 
 		pNameSelector := "body > div.center > div.conteudo.clearfix > table:nth-child(2) > tbody > tr:nth-child(1) > td.data.w35"
 		// doc.Find("td.data.w35").Each(func(index int, item *goquery.Selection) { //company's name

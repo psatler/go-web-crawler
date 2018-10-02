@@ -4,10 +4,28 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"unicode/utf8"
 
 	//custom package
 	"github.com/psatler/go-web-crawler/globals"
 )
+
+func parseNonUtf8(s string) string {
+	if !utf8.ValidString(s) {
+		v := make([]rune, 0, len(s))
+		for i, r := range s {
+			if r == utf8.RuneError {
+				_, size := utf8.DecodeRuneInString(s[i:])
+				if size == 1 {
+					continue
+				}
+			}
+			v = append(v, r)
+		}
+		s = string(v)
+	}
+	return s
+}
 
 //writes the result to a mysql database
 func WriteToDb() {
@@ -29,7 +47,8 @@ func WriteToDb() {
 		if err != nil {
 			fmt.Print("At writing to db (Prepare): ", err.Error())
 		}
-		_, err = stmt.Exec(globals.AllPapersInfoStruct.AllPapersInfo[i].PaperName, globals.AllPapersInfoStruct.AllPapersInfo[i].CompanyName, globals.AllPapersInfoStruct.AllPapersInfo[i].DailyRate, mValueInFloat)
+		companyName := parseNonUtf8(globals.AllPapersInfoStruct.AllPapersInfo[i].CompanyName)
+		_, err = stmt.Exec(globals.AllPapersInfoStruct.AllPapersInfo[i].PaperName, companyName, globals.AllPapersInfoStruct.AllPapersInfo[i].DailyRate, mValueInFloat)
 
 		if err != nil {
 			fmt.Print("At writing to db (Exec): ", err.Error())
