@@ -39,6 +39,10 @@ sudo docker-compose up
 - [StrConv](https://godoc.org/strconv): implements conversions to and from string representations of basic data types.
 - [Sort](https://godoc.org/sort#example-Slice): provides primitives for sorting slices and user-defined collections.
 
+# License
+
+This project is licensed under the terms of the [MIT License](https://opensource.org/licenses/MIT) © Pablo Satler 2018
+
 # Acknowledgments
 
 The app first searches a list of links to be queried afterwards. Then, it pulls some information of these links, like stock price, market value, etc. This second search (for details of each link) is the process which takes longer.
